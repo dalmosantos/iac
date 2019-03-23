@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure("2") do |config|
+
+
+    config.vm.box = "centos/7"
+    config.vm.box_check_update = true
+  
+    config.vm.provider "hyperv" do |hv|
+		hv.vmname = "CentOS75"
+		# With nested virtualization, at least 2 CPUs are needed.
+		hv.cpus = "2"
+		# With nested virtualization, at least 4GB of memory is needed.
+		hv.memory = "2048"
+    # Faster cloning and uses less disk space
+    hv.linked_clone = true
+end
+  
+    (51..52).each do |i|
+      config.vm.define "docker#{i}" do |node|
+        node.vm.hostname = "docker#{i}"
+        node.vm.network "private_network", ip: "172.21.12.1#{i}"
+      end
+    end
+  
+    config.vm.provision "shell", inline: <<-SHELL
+      yum clean all
+      yum update -y
+      curl -fsSL get.docker.com -o get-docker.sh
+      bash get-docker.sh
+    SHELL
+  end

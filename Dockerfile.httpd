@@ -1,0 +1,13 @@
+FROM centos:6.10
+
+# Install necessary packages
+RUN yum repolist && \
+    yum update -y && \
+    yum --setopt=tsflags=nodocs -y install httpd httpd-tools openssl curl jq tar unzip zip mod_ssl \
+    yum clean all
+RUN rm -rf /tmp/*.* /var/cache/yum
+RUN echo "Apache HTTPD" >> /var/www/html/index.html
+
+EXPOSE  80 443
+
+CMD     ["/usr/sbin/httpd","-D","FOREGROUND"]

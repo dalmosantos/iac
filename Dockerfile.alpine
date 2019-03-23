@@ -1,0 +1,8 @@
+FROM openjdk:8u191-jdk-alpine3.9
+USER root
+RUN ( apk fix     --no-cache || echo 'cannot fix.'         )                                        && \
+    ( apk upgrade --no-cache || echo 'cannot upgrade.'     )                                        && \
+    ( apk cache   -v   clean || echo 'cannot clean cache.' )                                        && \
+      apk add     --no-cache --update --upgrade                                                        \
+busybox-suid bash wget coreutils supervisor ca-certificates unzip sudo openssh-client shadow
+RUN sudo rm -rf /tmp/*.* /var/cache/apk /var/lib/apk /etc/apk/cache || echo 'oops' 
